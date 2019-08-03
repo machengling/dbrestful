@@ -1,0 +1,71 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "beego Test API",
+        "description": "beego has a very cool tools to autogenerate documents for your API",
+        "version": "1.0.0",
+        "termsOfService": "http://beego.me/",
+        "contact": {
+            "email": "astaxie@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "basePath": "/v1",
+    "paths": {
+        "/insert/insert": {
+            "post": {
+                "tags": [
+                    "insert"
+                ],
+                "description": "create users",
+                "operationId": "InsertController.CreateUser",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for user content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.InsertParam"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{int} models.User.Id"
+                    },
+                    "403": {
+                        "description": "body is empty"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "173.0xc00014bef0.false": {
+            "title": "false",
+            "type": "object"
+        },
+        "models.InsertParam": {
+            "title": "InsertParam",
+            "type": "object",
+            "properties": {
+                "param": {
+                    "$ref": "#/definitions/173.0xc00014bef0.false"
+                },
+                "tablename": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "insert",
+            "description": "Operations about Users\n"
+        }
+    ]
+}
