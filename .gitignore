@@ -5,3 +5,7 @@ lastupdate.tmp
 swagger/swagger.json
 swagger/swagger.yml
 routers/commentsRouter_controllers.go
+dbrestful.exe
+routers/commentsRouter_controllers.go
+swagger/swagger.json
+swagger/swagger.yml
