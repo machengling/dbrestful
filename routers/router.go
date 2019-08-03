@@ -20,6 +20,16 @@ func init() {
 				&controllers.InsertController{},
 			),
 		),
+		beego.NSNamespace("/createtable",
+			beego.NSInclude(
+				&controllers.CreateTableController{},
+			),
+		),
+		beego.NSNamespace("/delete",
+			beego.NSInclude(
+				&controllers.DeleteController{},
+			),
+		),
 	)
 	beego.AddNamespace(ns)
 }

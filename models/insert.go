@@ -3,18 +3,14 @@ package models
 import (
 	"dbrestful/store"
 	"fmt"
+	"reflect"
 	"strings"
 
 	"github.com/astaxie/beego/logs"
 )
 
-var ()
-
-func init() {
-}
-
 type InsertParam struct {
-	Param     map[string]interface{} `json:"param,omitempty"`
+	Params    map[string]interface{} `json:"params,omitempty"`
 	TableName string                 `json:"tablename,omitempty"`
 }
 
@@ -28,8 +24,15 @@ func Insert(tablename string, param map[string]interface{}) (rows int64, err err
 	paramStr := ""
 	valueStr := ""
 	for k, v := range param {
+		// 判断传入的值是否为字符串
+		t := reflect.TypeOf(v)
 		paramStr += k + ","
-		valueStr += fmt.Sprint(v) + ","
+		if t.Kind() == reflect.String {
+			valueStr += "'" + fmt.Sprint(v) + "'" + ","
+		} else {
+			valueStr += fmt.Sprint(v) + ","
+		}
+
 	}
 	paramStr = strings.TrimRight(paramStr, ",")
 	valueStr = strings.TrimRight(valueStr, ",")
@@ -42,8 +45,8 @@ func Insert(tablename string, param map[string]interface{}) (rows int64, err err
 		num, _ := res.RowsAffected()
 		logs.Info("row affected nums:", num)
 		return num, err
-	} else {
-		logs.Error(err)
-		return 0, err
 	}
+	logs.Error(err)
+	return 0, err
+
 }
