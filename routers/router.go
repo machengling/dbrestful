@@ -38,24 +38,3 @@ func registeRouter(controller controllers.BaseController) {
 	}
 
 }
-
-// func init() {
-// 	ns := beego.NewNamespace("/v1",
-// 		beego.NSNamespace("/insert",
-// 			beego.NSInclude(
-// 				&controllers.InsertController{},
-// 			),
-// 		),
-// 		beego.NSNamespace("/createtable",
-// 			beego.NSInclude(
-// 				&controllers.CreateTableController{},
-// 			),
-// 		),
-// 		beego.NSNamespace("/delete",
-// 			beego.NSInclude(
-// 				&controllers.DeleteController{},
-// 			),
-// 		),
-// 	)
-// 	beego.AddNamespace(ns)
-// }

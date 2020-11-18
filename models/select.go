@@ -13,10 +13,11 @@ import (
 type SelectParam struct {
 	Params    map[string]SFieldParam
 	Columns   map[string]SColumnParam
-	TableName string `json:"tablename,omitempty"`
-	Limit     int    `json:"limit,omitempty"`
-	Offset    int    `json:"offset,omitempty"`
-	GetTotal  bool   `json:"get_total,omitempty"`
+	TableName string   `json:"tablename,omitempty"`
+	Limit     string   `json:"limit,omitempty"`
+	Offset    string   `json:"offset,omitempty"`
+	IsTotal   bool     `json:"istotal,omitempty"`
+	GroupBy   []string `json:"groupby,omitempty"`
 }
 
 type SColumnParam struct {
@@ -39,10 +40,11 @@ type RowData struct {
 func Select(param SelectParam) (rows RowData, err error) {
 	o := store.GetDB()
 
-	paramStr := whereSQL(param)
+	whereStr := whereSQL(param)
 	columnStr := columnSQL(param)
 	pageStr := pageSQL(param)
-	sql := "SELECT " + columnStr + " FROM " + param.TableName + paramStr + pageStr
+	groupbyStr := groupbySQL(param)
+	sql := strings.Join([]string{"SELECT", columnStr, "FROM", param.TableName, whereStr, groupbyStr, pageStr}, " ")
 	logs.Debug(sql)
 
 	var maps []orm.Params
@@ -50,7 +52,7 @@ func Select(param SelectParam) (rows RowData, err error) {
 	rows.Rows = maps
 
 	// 如果GetTotal为true ，则查询列表的数量
-	if param.GetTotal == true {
+	if param.IsTotal == true {
 		rows.TotalSize = SelectCount(param)
 	}
 	if err != nil {
@@ -62,11 +64,13 @@ func Select(param SelectParam) (rows RowData, err error) {
 	}
 	return rows, err
 }
+
+// SelectCount 查询数量
 func SelectCount(param SelectParam) (count interface{}) {
 	o := store.GetDB()
 
 	paramStr := whereSQL(param)
-	sql := "SELECT count(1) as count FROM " + param.TableName + paramStr
+	sql := strings.Join([]string{"SELECT count(1) as count FROM", param.TableName, paramStr}, " ")
 	logs.Debug(sql)
 
 	var maps []orm.Params
@@ -83,6 +87,7 @@ func SelectCount(param SelectParam) (count interface{}) {
 	logs.Debug("SelectCount", maps, maps[0]["count"])
 	return maps[0]["count"]
 }
+
 func whereSQL(param SelectParam) string {
 	paramStr := ""
 	// 拼接where语句
@@ -143,5 +148,24 @@ func columnSQL(param SelectParam) string {
 
 func pageSQL(param SelectParam) string {
 	pageStr := ""
+	if param.Limit != "" {
+		pageStr = " LIMIT " + param.Limit
+
+		if param.Offset != "" {
+			pageStr += " OFFSET " + param.Offset
+		}
+	}
+
 	return pageStr
+}
+
+func groupbySQL(param SelectParam) string {
+	groupbyStr := ""
+	if param.GroupBy != nil {
+		groupbyStr = strings.Join(param.GroupBy, ",")
+	}
+	if groupbyStr != "" {
+		groupbyStr = " GROUP BY " + groupbyStr + " "
+	}
+	return groupbyStr
 }
