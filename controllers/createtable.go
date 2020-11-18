@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"dbrestful/models"
+	"dbrestful/utils"
 	"encoding/json"
 
 	"github.com/astaxie/beego"
@@ -10,6 +11,18 @@ import (
 
 type CreateTableController struct {
 	beego.Controller
+}
+
+// GetRoot 定义根路由
+func (s *CreateTableController) GetRoot() string {
+	return "createtable"
+}
+
+// GetRouters 定义路由
+func (s *CreateTableController) GetRouters() map[string]string {
+	return map[string]string{
+		"": "post:CreateTable",
+	}
 }
 
 // @Title CreateTable
@@ -24,7 +37,7 @@ func (c *CreateTableController) CreateTable() {
 	if err != nil {
 		logs.Error(err)
 		c.Ctx.ResponseWriter.WriteHeader(200)
-		c.Data["json"] = Response{Code: "200", Msg: "failed", Data: err}
+		c.Data["json"] = utils.Response{Code: "200", Msg: "failed", Data: err}
 		c.ServeJSON()
 		return
 	}
@@ -33,10 +46,10 @@ func (c *CreateTableController) CreateTable() {
 	if err != nil {
 		logs.Error(err)
 		c.Ctx.ResponseWriter.WriteHeader(200)
-		c.Data["json"] = Response{Code: "200", Msg: "failed", Data: err}
+		c.Data["json"] = utils.Response{Code: "200", Msg: "failed", Data: err}
 		c.ServeJSON()
 		return
 	}
-	c.Data["json"] = Response{Code: "200", Msg: "success"}
+	c.Data["json"] = utils.Response{Code: "200", Msg: "success"}
 	c.ServeJSON()
 }

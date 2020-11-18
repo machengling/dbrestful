@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"dbrestful/models"
+	"dbrestful/utils"
 	"encoding/json"
 
 	"github.com/astaxie/beego/logs"
@@ -12,6 +13,18 @@ import (
 // InsertController ...
 type InsertController struct {
 	beego.Controller
+}
+
+// GetRoot 定义根路由
+func (s *InsertController) GetRoot() string {
+	return "insert"
+}
+
+// GetRouters 定义路由
+func (s *InsertController) GetRouters() map[string]string {
+	return map[string]string{
+		"": "post:Insert",
+	}
 }
 
 // @Title Insert ...
@@ -26,7 +39,7 @@ func (u *InsertController) Insert() {
 	if err != nil {
 		logs.Error(err)
 		u.Ctx.ResponseWriter.WriteHeader(200)
-		u.Data["json"] = Response{Code: "200", Msg: "failed", Data: err}
+		u.Data["json"] = utils.Response{Code: "200", Msg: "failed", Data: err}
 		u.ServeJSON()
 		return
 	}
@@ -35,10 +48,10 @@ func (u *InsertController) Insert() {
 	if err != nil {
 		logs.Error(err)
 		u.Ctx.ResponseWriter.WriteHeader(200)
-		u.Data["json"] = Response{Code: "200", Msg: "failed", Data: err}
+		u.Data["json"] = utils.Response{Code: "200", Msg: "failed", Data: err}
 		u.ServeJSON()
 		return
 	}
-	u.Data["json"] = Response{Code: "200", Msg: "success", Data: models.RowAffacted{Rows: rows}}
+	u.Data["json"] = utils.Response{Code: "200", Msg: "success", Data: models.RowAffacted{Rows: rows}}
 	u.ServeJSON()
 }

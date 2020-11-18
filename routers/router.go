@@ -9,27 +9,53 @@ package routers
 
 import (
 	"dbrestful/controllers"
+	"path"
 
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
+)
+
+const (
+	baseURL = "/v1"
 )
 
 func init() {
-	ns := beego.NewNamespace("/v1",
-		beego.NSNamespace("/insert",
-			beego.NSInclude(
-				&controllers.InsertController{},
-			),
-		),
-		beego.NSNamespace("/createtable",
-			beego.NSInclude(
-				&controllers.CreateTableController{},
-			),
-		),
-		beego.NSNamespace("/delete",
-			beego.NSInclude(
-				&controllers.DeleteController{},
-			),
-		),
-	)
-	beego.AddNamespace(ns)
+	registeRouter(&controllers.CreateTableController{})
+	registeRouter(&controllers.DeleteController{})
+	registeRouter(&controllers.InsertController{})
+	registeRouter(&controllers.SelectController{})
 }
+
+func registeRouter(controller controllers.BaseController) {
+	routerMap := controller.GetRouters()
+	rootPath := controller.GetRoot()
+	if routerMap == nil {
+		return
+	}
+	for routerPath, method := range routerMap {
+		logs.Info("path.Join(baseURL, rootPath, routerPath)", path.Join(baseURL, rootPath, routerPath))
+		beego.Router(path.Join(baseURL, rootPath, routerPath), controller, method)
+	}
+
+}
+
+// func init() {
+// 	ns := beego.NewNamespace("/v1",
+// 		beego.NSNamespace("/insert",
+// 			beego.NSInclude(
+// 				&controllers.InsertController{},
+// 			),
+// 		),
+// 		beego.NSNamespace("/createtable",
+// 			beego.NSInclude(
+// 				&controllers.CreateTableController{},
+// 			),
+// 		),
+// 		beego.NSNamespace("/delete",
+// 			beego.NSInclude(
+// 				&controllers.DeleteController{},
+// 			),
+// 		),
+// 	)
+// 	beego.AddNamespace(ns)
+// }
